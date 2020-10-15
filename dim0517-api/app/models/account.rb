@@ -16,4 +16,14 @@ class Account < ApplicationRecord
     class_name: '::Transactions',
     foreign_key: 'receiver_id',
     dependent: :destroy
+
+  def add_balance(value)
+    self.balance += value
+    save!
+  end
+
+  def withdraw_balance(value)
+    self.balance -= value
+    save!
+  end
 end

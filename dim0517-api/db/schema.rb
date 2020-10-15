@@ -18,7 +18,7 @@ ActiveRecord::Schema.define(version: 2020_10_15_003222) do
   create_table "accounts", force: :cascade do |t|
     t.string "account_number"
     t.string "bank_number"
-    t.decimal "balance", precision: 2, default: "0"
+    t.decimal "balance", precision: 9, scale: 3, default: "0.0"
     t.bigint "user_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -26,7 +26,7 @@ ActiveRecord::Schema.define(version: 2020_10_15_003222) do
   end
 
   create_table "transactions", force: :cascade do |t|
-    t.string "type"
+    t.string "t_type"
     t.decimal "value"
     t.bigint "sender_id"
     t.bigint "receiver_id"
