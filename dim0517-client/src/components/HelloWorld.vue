@@ -1,94 +1,23 @@
-<template>
-  <v-container>
-    <v-row class="text-center">
-      <v-col cols="12">
-        <v-img
-          :src="require('../assets/logo.svg')"
-          class="my-3"
-          contain
-          height="200"
-        />
-      </v-col>
-
-      <v-col class="mb-4">
-        <h1 class="display-2 font-weight-bold mb-3">
-          Welcome to Vuetify
-        </h1>
-
-        <p class="subheading font-weight-regular">
-          For help and collaboration with other Vuetify developers,
-          <br>please join our online
-          <a
-            href="https://community.vuetifyjs.com"
-            target="_blank"
-          >Discord Community</a>
-        </p>
-      </v-col>
-
-      <v-col
-        class="mb-5"
-        cols="12"
-      >
-        <h2 class="headline font-weight-bold mb-3">
-          What's next?
-        </h2>
-
-        <v-row justify="center">
-          <a
-            v-for="(next, i) in whatsNext"
-            :key="i"
-            :href="next.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ next.text }}
-          </a>
-        </v-row>
-      </v-col>
-
-      <v-col
-        class="mb-5"
-        cols="12"
-      >
-        <h2 class="headline font-weight-bold mb-3">
-          Important Links
-        </h2>
-
-        <v-row justify="center">
-          <a
-            v-for="(link, i) in importantLinks"
-            :key="i"
-            :href="link.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ link.text }}
-          </a>
-        </v-row>
-      </v-col>
-
-      <v-col
-        class="mb-5"
-        cols="12"
-      >
-        <h2 class="headline font-weight-bold mb-3">
-          Ecosystem
-        </h2>
-
-        <v-row justify="center">
-          <a
-            v-for="(eco, i) in ecosystem"
-            :key="i"
-            :href="eco.href"
-            class="subheading mx-3"
-            target="_blank"
-          >
-            {{ eco.text }}
-          </a>
-        </v-row>
-      </v-col>
-    </v-row>
-  </v-container>
+<template lang="pug">
+  v-container(style="padding-top:0")
+    v-row(justify='space-around')
+      v-card(tile, width="100%")
+        .primary(style="height:200px")
+          v-card-title.justify-center.align-center.flex-column(style="height:100%")
+            v-avatar(size='56')
+              img(alt='user' src='https://cdn.pixabay.com/photo/2020/06/24/19/12/cabbage-5337431_1280.jpg')
+            div.mt-1.black--text.font-weight-bold
+              | João da Silva
+        v-card-text
+          .font-weight-bold.ml-8.mb-2
+            | Hoje
+          v-timeline(align-top, dense)
+            v-timeline-item(v-for='message in messages' :key='message.time' :color='message.color' small)
+              div
+                .font-weight-normal
+                  strong {{ message.from }}
+                  |  @{{ message.time }}
+                div {{ message.message }}
 </template>
 
 <script>
@@ -96,56 +25,26 @@
     name: 'HelloWorld',
 
     data: () => ({
-      ecosystem: [
+      messages: [
         {
-          text: 'vuetify-loader',
-          href: 'https://github.com/vuetifyjs/vuetify-loader',
+          from: 'Pagamento',
+          message: 'Pagamento de conta R$120,00',
+          time: '10:42am',
+          color: 'deep-purple lighten-1'
         },
         {
-          text: 'github',
-          href: 'https://github.com/vuetifyjs/vuetify',
+          from: 'Depósito',
+          message: 'Transferência recebida R$500,00',
+          time: '10:37am',
+          color: 'green'
         },
         {
-          text: 'awesome-vuetify',
-          href: 'https://github.com/vuetifyjs/awesome-vuetify',
-        },
-      ],
-      importantLinks: [
-        {
-          text: 'Documentation',
-          href: 'https://vuetifyjs.com',
-        },
-        {
-          text: 'Chat',
-          href: 'https://community.vuetifyjs.com',
-        },
-        {
-          text: 'Made with Vuetify',
-          href: 'https://madewithvuejs.com/vuetify',
-        },
-        {
-          text: 'Twitter',
-          href: 'https://twitter.com/vuetifyjs',
-        },
-        {
-          text: 'Articles',
-          href: 'https://medium.com/vuetify',
-        },
-      ],
-      whatsNext: [
-        {
-          text: 'Explore components',
-          href: 'https://vuetifyjs.com/components/api-explorer',
-        },
-        {
-          text: 'Select a layout',
-          href: 'https://vuetifyjs.com/getting-started/pre-made-layouts',
-        },
-        {
-          text: 'Frequently Asked Questions',
-          href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
-        },
-      ],
-    }),
+          from: 'Pagamento',
+          message: 'Boleto R$50,00',
+          time: '9:47am',
+          color: 'deep-purple lighten-1'
+        }
+      ]
+    })
   }
 </script>
