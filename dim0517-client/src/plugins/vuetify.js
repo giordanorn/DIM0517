@@ -10,7 +10,7 @@ export default new Vuetify({
     themes: {
       dark: {
         primary: colors.deepOrange,
-        secondary: colors.deepOrange.darken4,
+        secondary: colors.blue.darken2,
         error: colors.red.accent3,
         info: colors.blue,
         success: colors.green,

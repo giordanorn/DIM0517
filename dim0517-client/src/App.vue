@@ -1,21 +1,29 @@
 <template lang="pug">
   v-app
     v-main
-      HelloWorld
+      v-container(style="padding-top:0")
+        v-row(justify='space-around')
+          UserInfo
+          AccountInfo
+          Menu
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld';
+import UserInfo from './components/UserInfo'
+import AccountInfo from './components/AccountInfo'
+import Menu from './components/Menu'
 
 export default {
   name: 'App',
 
   components: {
-    HelloWorld,
+    UserInfo,
+    AccountInfo,
+    Menu
   },
 
   data: () => ({
     //
-  }),
-};
+  })
+}
 </script>
