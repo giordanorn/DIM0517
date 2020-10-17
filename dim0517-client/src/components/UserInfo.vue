@@ -8,6 +8,10 @@
             v-icon(dark) mdi-account-circle
           v-card-title.mt-1
             | João da Silva
+          v-card-subtitle
+            | Saldo na conta
+            br
+            | R$ 500,00
 </template>
 
 <script>
