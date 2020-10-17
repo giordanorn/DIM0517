@@ -11,15 +11,18 @@
           v-card-subtitle
             | Saldo na conta
             br
-            | R$ 500,00
+            | R$ {{saldo}}
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   export default {
     name: 'UserInfo',
-
     data: () => ({
       //
-    })
+    }),
+    computed: {
+      ...mapGetters(['saldo'])
+    }
   }
 </script>

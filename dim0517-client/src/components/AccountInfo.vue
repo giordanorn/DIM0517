@@ -1,41 +1,28 @@
 <template lang="pug">
 v-card-text
   .font-weight-bold.ml-8.mb-2
-    | Hoje
+    | Transações
   v-timeline(align-top, dense)
-    v-timeline-item(v-for='message in messages' :key='message.time' :color='message.color' small)
+    v-timeline-item(v-for='transacao in transacoesListadas' :key='transacao.data' small primary)
       div
         .font-weight-normal
-          strong {{ message.from }}
-          |  @{{ message.time }}
-        div {{ message.message }}
+          strong {{ transacao.tipo }}
+          |  @{{ transacao.dataFormatada }}
+        div {{ transacao.mensagem }}
 </template>
 
 <script>
+  import { mapGetters } from 'vuex'
   export default {
     name: 'AccountInfo',
-
     data: () => ({
-      messages: [
-        {
-          from: 'Pagamento',
-          message: 'Pagamento de conta R$120,00',
-          time: '10:42am',
-          color: 'deep-purple lighten-1'
-        },
-        {
-          from: 'Depósito',
-          message: 'Transferência recebida R$500,00',
-          time: '10:37am',
-          color: 'green'
-        },
-        {
-          from: 'Pagamento',
-          message: 'Boleto R$50,00',
-          time: '9:47am',
-          color: 'deep-purple lighten-1'
-        }
-      ]
-    })
+      tamanhoExtrato: 5
+    }),
+    computed: {
+      transacoesListadas () {
+        return this.transacoes.slice(0, this.tamanhoExtrato)
+      },
+      ...mapGetters(['transacoes'])
+    }
   }
 </script>

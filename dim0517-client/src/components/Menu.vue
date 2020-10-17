@@ -1,17 +1,27 @@
 <template lang="pug">
   v-container.d-flex.justify-space-around
-    v-btn(height="80px").info Extrato
-    v-btn(height="80px").success Depositar
-    v-btn(height="80px").error Pagar
+    v-btn(height="80px").info
+      | Extrato
+    v-btn(height="80px" @click="descontarSaldo").error
+      | Pagar
+    v-btn(height="80px" @click="incrementarSaldo").success
+      | Depositar
 </template>
 
 <script>
 export default {
   name: 'Menu',
-  
   data: () => ({
     //
   }),
+  methods: {
+    descontarSaldo () {
+      this.$store.dispatch('descontarSaldo', 50)
+    },
+    incrementarSaldo () {
+      this.$store.dispatch('incrementarSaldo', 50)
+    }
+  }
 }
 </script>
 
