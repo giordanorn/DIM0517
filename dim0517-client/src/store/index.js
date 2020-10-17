@@ -19,7 +19,7 @@ export default new Vuex.Store({
       let transacoes = getters.extrato.map(t => ({
         ...t,
         dataFormatada: new Date(t.data).toUTCString(),
-        mensagem: `${t.tipo} de R$${t.valor}`
+        mensagem: `${t.tipo} de R$${t.valor}`,
       }))
 
       return transacoes
@@ -47,6 +47,7 @@ export default new Vuex.Store({
         context.commit('descontarSaldo', payload)
         context.commit('registrarTransacao', {
           tipo: 'Saque',
+          cor: 'error',
           valor: payload
         })
       }
@@ -58,6 +59,7 @@ export default new Vuex.Store({
         context.commit('incrementarSaldo', payload)
         context.commit('registrarTransacao', {
           tipo: 'Depósito',
+          cor: 'success',
           valor: payload
         })
       }

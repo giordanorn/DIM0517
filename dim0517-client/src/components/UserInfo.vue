@@ -1,7 +1,6 @@
 <template lang="pug">
   v-card(tile, width="100%")
     .primary(style="height:200px")
-      //- v-card-title.justify-center.align-center.flex-column(style="height:100%")
       v-card-title.justify-center.align-center.flex-column(style="height:100%")
         v-card.text-center(elevation="4")
           v-avatar.secondary(size='56')
