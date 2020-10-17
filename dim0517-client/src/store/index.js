@@ -39,18 +39,28 @@ export default new Vuex.Store({
   },
   actions: {
     descontarSaldo (context, payload) {
-      context.commit('descontarSaldo', payload)
-      context.commit('registrarTransacao', {
-        tipo: 'Saque',
-        valor: payload
-      })
+      if (context.state.saldo < payload) {
+        console.error('Saldo insuficiente')
+      } else if (payload <= 0) {
+        console.error('Valor negativo')
+      } else {
+        context.commit('descontarSaldo', payload)
+        context.commit('registrarTransacao', {
+          tipo: 'Saque',
+          valor: payload
+        })
+      }
     },
     incrementarSaldo (context, payload) {
-      context.commit('incrementarSaldo', payload)
-      context.commit('registrarTransacao', {
-        tipo: 'Depósito',
-        valor: payload
-      })
+      if (payload <= 0) {
+        console.error('Valor negativo')
+      } else {
+        context.commit('incrementarSaldo', payload)
+        context.commit('registrarTransacao', {
+          tipo: 'Depósito',
+          valor: payload
+        })
+      }
     }
   },
   modules: {

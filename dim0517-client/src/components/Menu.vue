@@ -2,24 +2,69 @@
   v-container.d-flex.justify-space-around
     v-btn(height="80px").info
       | Extrato
-    v-btn(height="80px" @click="descontarSaldo").error
-      | Pagar
-    v-btn(height="80px" @click="incrementarSaldo").success
+    v-btn(height="80px" @click="dialogSacar = !dialogSacar").error
+      | Sacar
+    v-dialog(v-model="dialogSacar" width="250")
+      v-card
+        v-container
+          v-card-text
+            | Insira o valor para efetuar o saque
+            v-text-field(
+              :rules="rules"
+              v-model="valorSacar"
+              color="primary"
+              append-icon="mdi-send"
+              placeholder="0"
+              outline
+              flat
+              autofocus
+              @keyup.enter="sacar"
+            )
+    v-btn(height="80px" @click="dialogDepositar = !dialogDepositar").success
       | Depositar
+    v-dialog(v-model="dialogDepositar" width="250")
+      v-card
+        v-container
+          v-card-text
+            | Insira o valor para efetuar o depósito
+            v-text-field(
+              :rules="rules"
+              v-model="valorDepositar"
+              color="primary"
+              append-icon="mdi-send"
+              placeholder="0"
+              outline
+              flat
+              autofocus
+              @keyup.enter="depositar"
+            )
+
 </template>
 
 <script>
 export default {
   name: 'Menu',
   data: () => ({
-    //
+    dialogDepositar: false,
+    valorDepositar: '',
+    dialogSacar: false,
+    valorSacar: '',
+    rules: [
+      value => /^\d+$/.test(value) || 'Deve ser um número positivo.'
+    ]
   }),
   methods: {
-    descontarSaldo () {
-      this.$store.dispatch('descontarSaldo', 50)
+    sacar () {
+      const valor = parseInt(this.valorSacar)
+      this.$store.dispatch('descontarSaldo', valor)
+      this.valorSacar = ''
+      this.dialogSacar = false
     },
-    incrementarSaldo () {
-      this.$store.dispatch('incrementarSaldo', 50)
+    depositar () {
+      const valor = parseInt(this.valorDepositar)
+      this.$store.dispatch('incrementarSaldo', valor)
+      this.valorDepositar = ''
+      this.dialogDepositar = false
     }
   }
 }
