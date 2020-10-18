@@ -54,8 +54,8 @@ class AccountsController < ApplicationController
       render json: { message: 'Valor inválido' }, status: :bad_request and return
     end
 
-    if @sender && @account
-      Services::Accounts::Transfer.call(@sender, @receiver, value)
+    if @sender && @receiver
+      Accounts::Transfer.call(@sender, @receiver, value)
 
       render json: { message: 'Valor transferido' }, status: :ok
     else

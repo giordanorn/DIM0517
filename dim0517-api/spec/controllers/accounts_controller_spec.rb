@@ -209,7 +209,7 @@ RSpec.describe AccountsController, type: :controller do
       end
 
       it 'changes the receiver balance' do
-        old_balance = account.balance
+        old_balance = receiver.balance
 
         subject
 
