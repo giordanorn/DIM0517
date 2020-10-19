@@ -1,58 +1,76 @@
 <template lang="pug">
   v-container.d-flex.justify-space-between
-    //- v-btn.info(height="80px" @click="dialogExtrato = !dialogExtrato")
-      | Extrato
-      v-dialog(
-        width="450"
-        max-height="90%"
-        v-model="dialogExtrato")
+    v-btn.info(height="80px" @click="dialogTransferencia = !dialogTransferencia")
+      | Transferência
+      v-dialog(v-model="dialogTransferencia" width="300")
         v-card
           v-container
-            v-card-text
-              v-app-bar
-                v-card-title
-                  | Saldo atual R$ {{ saldo }} 
-              .d-flex.justify-center
-                Extrato
+            v-form(ref="formTransferencia" v-on:submit.prevent="validarTransferencia")
+              v-card-title
+                | Transferência
+              v-text-field(
+                :rules="[rules.isNumeroPositivo]"
+                v-model="contaTransferencia"
+                color="primary"
+                label="Conta destino"
+                autofocus
+                required)
+              v-text-field(
+                :rules="[rules.isNumeroPositivo, rules.isSaldoSuficiente]"
+                v-model="valorTransferencia"
+                color="primary"
+                label="Valor"
+                required)
+              v-btn(color="secondary" text @click="cancelarTransferencia")
+                | Cancelar
+              v-btn(color="primary" text @click="validarTransferencia")
+                | Confirmar
     v-btn.error(
       height="80px"
       @click="dialogSacar = !dialogSacar")
       | Saque
-      v-dialog(
-        v-model="dialogSacar"
-        width="250")
+      v-dialog(v-model="dialogSacar" width="300")
         v-card
           v-container
-            v-card-text
-              | Insira o valor para efetuar o saque
+            v-form(ref="formSaque" v-on:submit.prevent="validarSaque")
+              v-card-title
+                | Saque
               v-text-field(
-                :rules="rules"
+                :rules="[rules.isNumeroPositivo, rules.isSaldoSuficiente]"
                 v-model="valorSacar"
                 color="primary"
-                append-icon="mdi-send"
-                placeholder="0"
-                outline
-                flat
+                label="Valor"
                 autofocus
-                @keyup.enter="sacar")
+                required)
+              v-btn(color="secondary" text @click="cancelarSaque")
+                | Cancelar
+              v-btn(color="primary" text @click="validarSaque")
+                | Confirmar
     v-btn(height="80px" @click="dialogDepositar = !dialogDepositar").success
       | Depósito
-      v-dialog(v-model="dialogDepositar" width="250")
+      v-dialog(v-model="dialogDepositar" width="300")
         v-card
           v-container
-            v-card-text
-              | Insira o valor para efetuar o depósito
+            v-form(ref="formDeposito" v-on:submit.prevent="validarDeposito")
+              v-card-title
+                | Depósito
               v-text-field(
-                :rules="rules"
+                :rules="[rules.isNumeroPositivo]"
                 v-model="valorDepositar"
                 color="primary"
-                append-icon="mdi-send"
-                placeholder="0"
-                outline
-                flat
+                label="Valor"
                 autofocus
-                @keyup.enter="depositar"
-              )
+                required)
+              v-btn(
+                color="secondary"
+                text
+                @click="cancelarDeposito")
+                | Cancelar
+              v-btn(
+                color="primary"
+                text
+                @click="validarDeposito")
+                | Confirmar
 </template>
 
 <script>
@@ -63,29 +81,65 @@ export default {
   components: {
     Extrato
   },
-  data: () => ({
-    dialogExtrato: false,
-    dialogDepositar: false,
-    valorDepositar: '',
-    dialogSacar: false,
-    valorSacar: '',
-    rules: [
-      value => /^\d+$/.test(value) || 'Deve ser um número positivo.'
-    ]
-  }),
+  data() {
+    return {
+      dialogTransferencia: false,
+      dialogDepositar: false,
+      valorDepositar: '',
+      dialogSacar: false,
+      valorSacar: '',
+      valorTransferencia: '',
+      contaTransferencia: '',
+      rules: {
+        isNumeroPositivo: (value) => /^\d+$/.test(value) || 'Deve ser um número positivo.',
+        isSaldoSuficiente: (value) => value <= this.saldo || 'Saldo insuficiente.'
+      },
+    }
+  },
   methods: {
     sacar () {
       const valor = parseInt(this.valorSacar)
       this.$store.dispatch('descontarSaldo', valor)
-      this.valorSacar = ''
-      this.dialogSacar = false
+      this.cancelarSaque()
     },
     depositar () {
       const valor = parseInt(this.valorDepositar)
       this.$store.dispatch('incrementarSaldo', valor)
-      this.valorDepositar = ''
+      this.cancelarDeposito()
+    },
+    transferir () {
+      const valor = parseInt(this.valorTransferencia)
+      const conta = parseInt(this.contaTransferencia)
+      this.$store.dispatch('realizarTransferencia', {conta, valor})
+      this.cancelarTransferencia()
+    },
+    validarDeposito () {
+      if (this.$refs.formDeposito.validate()) {
+        this.depositar()
+      }
+    },
+    cancelarDeposito () {
       this.dialogDepositar = false
-    }
+      this.$refs.formDeposito.reset()
+    },
+    validarSaque () {
+      if (this.$refs.formSaque.validate()) {
+        this.sacar()
+      }
+    },
+    cancelarSaque () {
+      this.dialogSacar = false
+      this.$refs.formSaque.reset()
+    },
+    validarTransferencia () {
+      if (this.$refs.formTransferencia.validate()) {
+        this.transferir()
+      }
+    },
+    cancelarTransferencia () {
+      this.dialogTransferencia = false
+      this.$refs.formTransferencia.reset()
+    },
   },
   computed: {
     ...mapGetters(['saldo'])

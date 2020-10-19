@@ -19,7 +19,7 @@ export default new Vuex.Store({
       let transacoes = getters.extrato.map(t => ({
         ...t,
         dataFormatada: new Date(t.data).toUTCString(),
-        mensagem: `${t.tipo} de R$${t.valor}`,
+        mensagem: `${t.tipo} de R$${t.valor}${t.conta? ' para a conta ' + t.conta : ''}`,
       }))
 
       return transacoes
@@ -61,6 +61,19 @@ export default new Vuex.Store({
           tipo: 'Depósito',
           cor: 'success',
           valor: payload
+        })
+      }
+    },
+    realizarTransferencia (context, {conta, valor}) {
+      if (valor <= 0) {
+        console.error('Valor negativo')
+      } else {
+        context.commit('descontarSaldo', valor)
+        context.commit('registrarTransacao', {
+          tipo: 'Transferência',
+          cor: 'info',
+          valor,
+          conta
         })
       }
     }
