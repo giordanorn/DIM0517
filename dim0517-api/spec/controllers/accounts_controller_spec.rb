@@ -17,7 +17,7 @@ RSpec.describe AccountsController, type: :controller do
         subject
 
         expect(response.body).to include(
-          "Saldo total: #{account.balance}".to_json
+          "Saldo total: R$:#{account.balance}".to_json
         )
       end
     end
@@ -107,9 +107,9 @@ RSpec.describe AccountsController, type: :controller do
     end
   end
 
-  describe 'POST withdrawal' do
+  describe 'POST withdraw' do
     subject do
-      post :withdrawal, params: {
+      post :withdraw, params: {
         id: account.id,
         value: 400
       }

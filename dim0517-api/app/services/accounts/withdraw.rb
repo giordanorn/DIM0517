@@ -1,5 +1,5 @@
 module Accounts
-  class Withdrawal
+  class Withdraw
     def self.call(account, value)
       account.withdraw_balance(value)
 

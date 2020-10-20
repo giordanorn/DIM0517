@@ -3,7 +3,7 @@ class AccountsController < ApplicationController
   def balance
     @account = Account.find(params[:id])
 
-    render json: { message: "Saldo total: #{@account.balance}"}, status: :ok
+    render json: { message: "Saldo total: R$:#{@account.balance}"}, status: :ok
   rescue ActiveRecord::RecordNotFound
     render json: { message: 'A conta não existe' }, status: :not_found
   end
@@ -26,7 +26,7 @@ class AccountsController < ApplicationController
     render json: { message: 'A conta não existe' }, status: :not_found
   end
 
-  def withdrawal
+  def withdraw
     @account = Account.find(params[:id])
 
     value = params[:value].to_i
@@ -36,7 +36,7 @@ class AccountsController < ApplicationController
     end
 
     if @account
-      Accounts::Withdrawal.call(@account, value)
+      Accounts::Withdraw.call(@account, value)
 
       render json: { message: 'Valor sacado' }, status: :ok
     end
@@ -66,6 +66,6 @@ class AccountsController < ApplicationController
   private
 
   def account_params
-    params.require(:transaction).permit(:receiver_id, :value)
+    params.require(:account).permit(:receiver_id, :value)
   end
 end
