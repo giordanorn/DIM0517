@@ -3,6 +3,47 @@ require 'rails_helper'
 RSpec.describe AccountsController, type: :controller do
   let(:account) { FactoryBot.create(:account) }
 
+  describe 'GET #index' do
+    subject { get :index }
+
+    context 'when there are accounts' do
+      let!(:account) { FactoryBot.create(:account) }
+
+      it 'returns OK status' do
+        subject
+
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'returns a json body with a message' do
+        subject
+
+        expect(response.body).to eq(
+          {
+            message: {
+              users: [
+                {
+                  id: account.user.id,
+                  first_name: account.user.first_name,
+                  last_name: account.user.last_name,
+                  email: account.user.email,
+                  account: {
+                    id: account.id,
+                    account_number: account.account_number,
+                    bank_number: account.bank_number,
+                    balance: account.balance,
+                    user_id: account.user.id
+                  }
+                }
+              ],
+              total_users: Account.all.size
+            }
+          }.to_json
+        )
+      end
+    end
+  end
+
   describe 'GET #balance' do
     subject { get :balance, params: { id: account.id } }
 

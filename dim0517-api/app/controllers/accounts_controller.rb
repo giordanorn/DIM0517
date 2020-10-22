@@ -1,5 +1,14 @@
 class AccountsController < ApplicationController
 
+  def index
+    @accounts = Account.all
+
+    render json: { message: Accounts::AccountsSerializer.serialize!(@accounts) },
+      status: :ok
+  rescue
+    render json: { message: 'Erro' }, status: :bad_request
+  end
+
   def balance
     @account = Account.find(params[:id])
 
