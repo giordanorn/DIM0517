@@ -78,7 +78,8 @@ export default new Vuex.Store({
     registrarTransacao (state, payload) {
       const data = Date.now()
       const dataFormatada = new Date(data).toUTCString()
-      const mensagem = `${payload.tipo} de R$${payload.valor}${payload.tipo === 'Transferência' ? ' para a conta ' + payload.destino.account.account_number + ' agência ' + payload.destino.account.bank_number: ''}`
+      const mensagem = `${payload.tipo} de R$${payload.valor}${payload.tipo === 'Transferência' ? ` para ${payload.destino.first_name} ${payload.destino.last_name} 
+        | Conta ${payload.destino.account.account_number} Agência ${payload.destino.account.bank_number}`: ''}`
       state.contas[payload.conta.id - 1].extract = [
         {...payload, dataFormatada, mensagem},
         ...state.contas[payload.conta.id - 1].extract
