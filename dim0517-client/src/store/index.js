@@ -1,5 +1,14 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import axios from 'axios'
+
+const API_URL = "https://dim0517-api.herokuapp.com/"
+let api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+})
 
 Vue.use(Vuex)
 
@@ -66,123 +75,106 @@ export default new Vuex.Store({
     }
   },
   mutations: {
-    selecionarConta (state, payload) {
-      state.idContaSelecionada = payload
+    selecionarConta (state, { id, valor }) {
+      state.idContaSelecionada = id
+      state.contas[id-1].account.balance = valor
     },
-    descontarSaldo (state, payload) {
-      state.contas[payload.id - 1].account.balance -= payload.valor
+    realizarSaque (state, {id, valor}) {
+      state.contas[id - 1].account.balance -= valor
     },
-    incrementarSaldo (state, payload) {
-      state.contas[payload.id - 1].account.balance += payload.valor
+    realizarDeposito (state, { valor }) {
+      state.contas[state.idContaSelecionada - 1].account.balance += valor
     },
-    registrarTransacao (state, payload) {
+    registrarTransacao (state, {tipo, valor, id, cor, destino}) {
       const data = Date.now()
       const dataFormatada = new Date(data).toUTCString()
-      const mensagem = `${payload.tipo} de R$${payload.valor}${payload.tipo === 'Transferência' ? ` para ${payload.destino.first_name} ${payload.destino.last_name} 
-        | Conta ${payload.destino.account.account_number} Agência ${payload.destino.account.bank_number}`: ''}`
-      state.contas[payload.conta.id - 1].extract = [
-        {...payload, dataFormatada, mensagem},
-        ...state.contas[payload.conta.id - 1].extract
+      const mensagem = `${tipo} de R$${valor}${tipo === 'Transferência' ? ` para ${destino.first_name} ${destino.last_name} 
+        | Conta ${destino.account.account_number} Agência ${destino.account.bank_number}`: ''}`
+      state.contas[id - 1].extract = [
+        {tipo, valor, dataFormatada, mensagem, cor},
+        ...state.contas[id - 1].extract
       ]
     }
   },
   actions: {
-    selecionarConta (context, payload) {
-      context.commit('selecionarConta', payload)
+    selecionarConta (context, { id }) {
+      api.get(`/accounts/${id}/balance`)
+        .then(res => {
+          const valor = parseFloat(res.data.message.slice(16))
+          context.commit('selecionarConta', { id, valor })
+        })
+        .catch(err => {
+          console.error(err)
+        })
     },
-    descontarSaldo (context, payload) {
-      if (payload.valor <= 0) {
+    realizarSaque (context, {id, valor}) {
+      if (valor <= 0) {
         console.error('Valor negativo')
         return
       }
 
-      const conta = context.state.contas.find(conta => {
-        return conta.account.account_number === payload.conta
-          && conta.account.bank_number === payload.agencia
-      })
-
-      if (!conta) {
-        console.error('Conta não encontrada')
-      } else if (conta.account.balance < payload.valor) {
-        console.error('Saldo insuficiente')
-      } else {
-        context.commit('descontarSaldo', {
-          id: conta.id,
-          valor: payload.valor
+      api.post(`/accounts/${id}/withdraw`, { value: valor })
+        .then(res => {
+          console.log(res)
+          context.commit('realizarSaque', { id, valor })
+          context.commit('registrarTransacao', {
+            tipo: 'Saque',
+            cor: 'error',
+            valor,
+            id
+          })
         })
-        context.commit('registrarTransacao', {
-          tipo: 'Saque',
-          cor: 'error',
-          valor: payload.valor,
-          conta
+        .catch(err => {
+          console.error(err)
         })
-      }
     },
-    incrementarSaldo (context, payload) {
-      if (payload.valor <= 0) {
+    realizarDeposito (context, {id, valor}) {
+      if (valor <= 0) {
         console.error('Valor negativo')
         return
       }
 
-      const conta = context.state.contas.find(conta => {
-        return conta.account.account_number === payload.conta
-          && conta.account.bank_number === payload.agencia
-      })
-
-      if (!conta) {
-        console.error('Conta não encontrada')
-      } else {
-        context.commit('incrementarSaldo', {
-          id: conta.id,
-          valor: payload.valor
+      api.post(`/accounts/${id}/deposit`, { value: valor })
+        .then(res => {
+          console.log(res)
+          context.commit('realizarDeposito', { valor })
+          context.commit('registrarTransacao', {
+            tipo: 'Depósito',
+            cor: 'success',
+            id,
+            valor
+          })
         })
-        context.commit('registrarTransacao', {
-          tipo: 'Depósito',
-          cor: 'success',
-          conta,
-          valor: payload.valor
+        .catch(err => {
+          console.error(err)
         })
-      }
     },
-    realizarTransferencia (context, {origem, destino, valor}) {
+    realizarTransferencia (context, {id, valor, destino}) {
       if (valor <= 0) {
         console.error('Valor negativo')
         return
       } 
       
-      const contaOrigem = context.state.contas.find(conta => {
-        return conta.account.account_number === origem.conta
-          && conta.account.bank_number === origem.agencia
-      })
-
       const contaDestino = context.state.contas.find(conta => {
         return conta.account.account_number === destino.conta
           && conta.account.bank_number === destino.agencia
       })
 
-      if (!contaOrigem) {
-        console.error('Conta origem não encontrada')
-      } else if (!contaDestino) {
-        console.error('Conta destino não encontrada')
-      } else if (contaOrigem.account.balance < valor) {
-        console.error('Saldo insuficiente')
-      } else {
-        context.commit('descontarSaldo', {
-          id: contaOrigem.id,
-          valor
+      api.post(`/accounts/${id}/transfer`, { value: valor, receiver_id: contaDestino.id })
+        .then(res => {
+          console.log(res)
+          context.commit('realizarSaque', {
+            id,
+            valor
+          })
+          context.commit('registrarTransacao', {
+            tipo: 'Transferência',
+            cor: 'info',
+            id,
+            valor,
+            destino: contaDestino
+          })
         })
-        context.commit('incrementarSaldo', {
-          id: contaDestino.id,
-          valor
-        })
-        context.commit('registrarTransacao', {
-          tipo: 'Transferência',
-          cor: 'info',
-          valor,
-          conta: contaOrigem,
-          destino: contaDestino
-        })
-      }
     }
   },
   modules: {

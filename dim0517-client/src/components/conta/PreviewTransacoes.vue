@@ -1,11 +1,10 @@
 <template lang="pug">
   v-container.font-weight-bold
-    v-card-text
-      v-app-bar.text-center
-        v-card-title
-          | Saldo atual R$ {{ contaSelecionada.account.balance }} 
-      .d-flex.justify-center
-        Extrato
+    v-app-bar
+      v-card-title
+        | Saldo atual R$ {{ contaSelecionada.account.balance }} 
+    .d-flex.justify-center
+      Extrato
 </template>
 
 <script>

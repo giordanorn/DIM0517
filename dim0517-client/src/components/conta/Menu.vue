@@ -106,18 +106,16 @@ export default {
   methods: {
     sacar () {
       const valor = parseInt(this.valorSacar)
-      this.$store.dispatch('descontarSaldo', {
-        conta: this.contaSelecionada.account.account_number,
-        agencia: this.contaSelecionada.account.bank_number,
+      this.$store.dispatch('realizarSaque', {
+        id: this.contaSelecionada.account.id,
         valor
       })
       this.cancelarSaque()
     },
     depositar () {
       const valor = parseInt(this.valorDepositar)
-      this.$store.dispatch('incrementarSaldo', {
-        conta: this.contaSelecionada.account.account_number,
-        agencia: this.contaSelecionada.account.bank_number,
+      this.$store.dispatch('realizarDeposito', {
+        id: this.contaSelecionada.account.id,
         valor
       })
       this.cancelarDeposito()
@@ -127,10 +125,7 @@ export default {
       const conta = this.contaTransferencia
       const agencia = this.agenciaTransferencia
       this.$store.dispatch('realizarTransferencia', {
-        origem: {
-          agencia: this.contaSelecionada.account.bank_number,
-          conta: this.contaSelecionada.account.account_number
-        },
+        id: this.contaSelecionada.account.id,
         destino: {
           agencia,
           conta

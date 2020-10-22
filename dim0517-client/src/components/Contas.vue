@@ -1,12 +1,18 @@
 <template lang="pug">
-v-card.text-center
-  v-card-title
+div.text-center
+  v-card-title.justify-center
     | Contas
-  v-container
-    v-btn(
-      v-for="(conta, i) in contas"
-      @click="selecionarConta(i+1)")
-      | {{conta.first_name}} {{conta.last_name}}
+  v-container.d-flex.justify-space-around
+    v-card(v-for="(conta, i) in contas")
+      v-container
+        v-card-title.justify-center
+          | {{conta.first_name}} {{conta.last_name}}
+        v-card-text
+          | Agência: {{conta.account.bank_number}}
+          br
+          | Conta: {{conta.account.account_number}}
+        v-btn(@click="selecionarConta(i+1)")
+          | Selecionar
 </template>
 
 <script>
@@ -14,17 +20,9 @@ v-card.text-center
 import { mapGetters } from 'vuex'
 export default {
   name: "Contas",
-  data() {
-    return {
-      //
-    }
-  },
-  mounted() {
-    // axios.get('dim0517-api.herokuapp.com/accounts/1balance)
-  },
   methods: {
     selecionarConta (id) {
-      this.$store.dispatch('selecionarConta', id)
+      this.$store.dispatch('selecionarConta', { id })
     }
   },
   computed: {
