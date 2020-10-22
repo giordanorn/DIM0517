@@ -5,7 +5,7 @@
         v-card.text-center(elevation="4")
           v-avatar.secondary(size='56')
             v-icon(dark) mdi-account-circle
-          v-card-title.mt-1
+          v-card-title.mt-1.justify-center
             | {{ contaSelecionada.first_name }} {{ contaSelecionada.last_name }}
           v-card-subtitle
             | Agência {{ contaSelecionada.account.bank_number }}
