@@ -10,10 +10,16 @@
                 | Transferência
               v-text-field(
                 :rules="[rules.isNumeroPositivo]"
+                v-model="agenciaTransferencia"
+                color="primary"
+                label="Agência"
+                autofocus
+                required)
+              v-text-field(
+                :rules="[rules.isNumeroPositivo]"
                 v-model="contaTransferencia"
                 color="primary"
-                label="Conta destino"
-                autofocus
+                label="Conta"
                 required)
               v-text-field(
                 :rules="[rules.isNumeroPositivo, rules.isSaldoSuficiente]"
@@ -90,6 +96,7 @@ export default {
       valorSacar: '',
       valorTransferencia: '',
       contaTransferencia: '',
+      agenciaTransferencia: '',
       rules: {
         isNumeroPositivo: (value) => /^\d+$/.test(value) || 'Deve ser um número positivo.',
         isSaldoSuficiente: (value) => value <= this.contaSelecionada.account.balance || 'Saldo insuficiente.'
@@ -117,8 +124,19 @@ export default {
     },
     transferir () {
       const valor = parseInt(this.valorTransferencia)
-      const conta = parseInt(this.contaTransferencia)
-      this.$store.dispatch('realizarTransferencia', {conta, valor})
+      const conta = this.contaTransferencia
+      const agencia = this.agenciaTransferencia
+      this.$store.dispatch('realizarTransferencia', {
+        origem: {
+          agencia: this.contaSelecionada.account.bank_number,
+          conta: this.contaSelecionada.account.account_number
+        },
+        destino: {
+          agencia,
+          conta
+        },
+        valor
+      })
       this.cancelarTransferencia()
     },
     validarDeposito () {

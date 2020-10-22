@@ -78,10 +78,10 @@ export default new Vuex.Store({
     registrarTransacao (state, payload) {
       const data = Date.now()
       const dataFormatada = new Date(data).toUTCString()
-      const mensagem = `${payload.tipo} de R$${payload.valor}${payload.tipo === 'Transferência' ? ' para a conta ' + payload.destino : ''}`
-      state.contas[payload.id - 1].extract = [
+      const mensagem = `${payload.tipo} de R$${payload.valor}${payload.tipo === 'Transferência' ? ' para a conta ' + payload.destino.account.account_number + ' agência ' + payload.destino.account.bank_number: ''}`
+      state.contas[payload.conta.id - 1].extract = [
         {...payload, dataFormatada, mensagem},
-        ...state.contas[payload.id - 1].extract
+        ...state.contas[payload.conta.id - 1].extract
       ]
     }
   },
@@ -113,7 +113,7 @@ export default new Vuex.Store({
           tipo: 'Saque',
           cor: 'error',
           valor: payload.valor,
-          id: conta.id
+          conta
         })
       }
     },
@@ -138,21 +138,48 @@ export default new Vuex.Store({
         context.commit('registrarTransacao', {
           tipo: 'Depósito',
           cor: 'success',
-          id: conta.id,
+          conta,
           valor: payload.valor
         })
       }
     },
-    realizarTransferencia (context, {conta, valor}) {
+    realizarTransferencia (context, {origem, destino, valor}) {
       if (valor <= 0) {
         console.error('Valor negativo')
+        return
+      } 
+      
+      const contaOrigem = context.state.contas.find(conta => {
+        return conta.account.account_number === origem.conta
+          && conta.account.bank_number === origem.agencia
+      })
+
+      const contaDestino = context.state.contas.find(conta => {
+        return conta.account.account_number === destino.conta
+          && conta.account.bank_number === destino.agencia
+      })
+
+      if (!contaOrigem) {
+        console.error('Conta origem não encontrada')
+      } else if (!contaDestino) {
+        console.error('Conta destino não encontrada')
+      } else if (contaOrigem.account.balance < valor) {
+        console.error('Saldo insuficiente')
       } else {
-        context.commit('descontarSaldo', valor)
+        context.commit('descontarSaldo', {
+          id: contaOrigem.id,
+          valor
+        })
+        context.commit('incrementarSaldo', {
+          id: contaDestino.id,
+          valor
+        })
         context.commit('registrarTransacao', {
           tipo: 'Transferência',
           cor: 'info',
           valor,
-          conta
+          conta: contaOrigem,
+          destino: contaDestino
         })
       }
     }
