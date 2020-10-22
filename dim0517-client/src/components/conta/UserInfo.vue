@@ -6,22 +6,22 @@
           v-avatar.secondary(size='56')
             v-icon(dark) mdi-account-circle
           v-card-title.mt-1
-            | João da Silva
+            | {{ contaSelecionada.first_name }} {{ contaSelecionada.last_name }}
           v-card-subtitle
-            | Saldo na conta
+            | Agência {{ contaSelecionada.account.bank_number }}
             br
-            | R$ {{saldo}}
+            | Conta {{ contaSelecionada.account.account_number }}
 </template>
 
 <script>
-  import { mapGetters } from 'vuex'
-  export default {
-    name: 'UserInfo',
-    data: () => ({
-      //
-    }),
-    computed: {
-      ...mapGetters(['saldo'])
-    }
+import { mapGetters } from 'vuex'
+export default {
+  name: 'UserInfo',
+  data: () => ({
+    //
+  }),
+  computed: {
+    ...mapGetters(['contaSelecionada'])
   }
+}
 </script>

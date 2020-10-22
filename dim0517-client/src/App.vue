@@ -1,32 +1,28 @@
 <template lang="pug">
   v-app
     v-main
-      v-container(style="padding-top:0")
-        v-row(justify='space-around')
-          UserInfo
-          v-card(tile, width="100%")
-            v-container
-              v-row
-                Menu
-                PreviewTransacoes
+      Contas
+      Conta(v-if="contaSelecionada")
 </template>
 
 <script>
-import UserInfo from './components/UserInfo'
-import PreviewTransacoes from './components/PreviewTransacoes'
-import Menu from './components/Menu'
+import Contas from './components/Contas'
+import Conta from './components/conta/Conta'
+import { mapGetters } from 'vuex'
 
 export default {
   name: 'App',
-
   components: {
-    UserInfo,
-    PreviewTransacoes,
-    Menu
+    Contas,
+    Conta
   },
-
-  data: () => ({
-    //
-  })
+  data() {
+    return {
+      //
+    }
+  },
+  computed: {
+    ...mapGetters(['contaSelecionada'])
+  }
 }
 </script>

@@ -3,7 +3,7 @@
     v-card-text
       v-app-bar.text-center
         v-card-title
-          | Saldo atual R$ {{ saldo }} 
+          | Saldo atual R$ {{ contaSelecionada.account.balance }} 
       .d-flex.justify-center
         Extrato
 </template>
@@ -17,7 +17,7 @@
       Extrato
     },
     computed: {
-      ...mapGetters(['saldo'])
+      ...mapGetters(['contaSelecionada'])
     }
   }
 </script>

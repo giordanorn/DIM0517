@@ -92,19 +92,27 @@ export default {
       contaTransferencia: '',
       rules: {
         isNumeroPositivo: (value) => /^\d+$/.test(value) || 'Deve ser um número positivo.',
-        isSaldoSuficiente: (value) => value <= this.saldo || 'Saldo insuficiente.'
+        isSaldoSuficiente: (value) => value <= this.contaSelecionada.account.balance || 'Saldo insuficiente.'
       },
     }
   },
   methods: {
     sacar () {
       const valor = parseInt(this.valorSacar)
-      this.$store.dispatch('descontarSaldo', valor)
+      this.$store.dispatch('descontarSaldo', {
+        conta: this.contaSelecionada.account.account_number,
+        agencia: this.contaSelecionada.account.bank_number,
+        valor
+      })
       this.cancelarSaque()
     },
     depositar () {
       const valor = parseInt(this.valorDepositar)
-      this.$store.dispatch('incrementarSaldo', valor)
+      this.$store.dispatch('incrementarSaldo', {
+        conta: this.contaSelecionada.account.account_number,
+        agencia: this.contaSelecionada.account.bank_number,
+        valor
+      })
       this.cancelarDeposito()
     },
     transferir () {
@@ -142,7 +150,7 @@ export default {
     },
   },
   computed: {
-    ...mapGetters(['saldo'])
+    ...mapGetters(['contaSelecionada'])
   }
 }
 </script>

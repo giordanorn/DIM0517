@@ -6,61 +6,140 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     saldo: 500,
-    extrato: []
+    extrato: [],
+    contas: [
+      {
+        id: 1,
+        first_name: "John",
+        last_name: "Johnson",
+        email: "john@johnson",
+        account: {
+          id: 1,
+          account_number: "00001",
+          bank_number: "00000001",
+          balance: 100.0,
+          user_id: 1
+        },
+        extract: []
+      },
+      {
+        id: 2,
+        first_name: "Mary",
+        last_name: "Adams",
+        email: "mary@adams",
+        account: {
+          id: 2,
+          account_number: "00002",
+          bank_number: "00000001",
+          balance: 200.0,
+          user_id: 2
+        },
+        extract: []
+      },
+      {
+        id: 3,
+        first_name: "Billy",
+        last_name: "Smith",
+        email: "billy@smith",
+        account: {
+          id: 3,
+          account_number: "00001",
+          bank_number: "00000002",
+          balance: 300.0,
+          user_id: 3
+        },
+        extract: []
+      },
+    ],
+    idContaSelecionada: 0
   },
   getters: {
-    saldo (state) {
-      return state.saldo
+    contas (state) {
+      return state.contas
     },
-    extrato (state) {
-      return state.extrato
-    },
-    transacoes (state, getters) {
-      let transacoes = getters.extrato.map(t => ({
-        ...t,
-        dataFormatada: new Date(t.data).toUTCString(),
-        mensagem: `${t.tipo} de R$${t.valor}${t.conta? ' para a conta ' + t.conta : ''}`,
-      }))
-
-      return transacoes
+    contaSelecionada (state) {
+      if (state.idContaSelecionada > 0) {
+        return state.contas[state.idContaSelecionada - 1]
+      } else {
+        return null
+      }
     }
   },
   mutations: {
+    selecionarConta (state, payload) {
+      state.idContaSelecionada = payload
+    },
     descontarSaldo (state, payload) {
-      state.saldo -= payload
+      state.contas[payload.id - 1].account.balance -= payload.valor
     },
     incrementarSaldo (state, payload) {
-      state.saldo += payload
+      state.contas[payload.id - 1].account.balance += payload.valor
     },
     registrarTransacao (state, payload) {
       const data = Date.now()
-      state.extrato = [{...payload, data}, ...state.extrato]
+      const dataFormatada = new Date(data).toUTCString()
+      const mensagem = `${payload.tipo} de R$${payload.valor}${payload.tipo === 'Transferência' ? ' para a conta ' + payload.destino : ''}`
+      state.contas[payload.id - 1].extract = [
+        {...payload, dataFormatada, mensagem},
+        ...state.contas[payload.id - 1].extract
+      ]
     }
   },
   actions: {
+    selecionarConta (context, payload) {
+      context.commit('selecionarConta', payload)
+    },
     descontarSaldo (context, payload) {
-      if (context.state.saldo < payload) {
-        console.error('Saldo insuficiente')
-      } else if (payload <= 0) {
+      if (payload.valor <= 0) {
         console.error('Valor negativo')
+        return
+      }
+
+      const conta = context.state.contas.find(conta => {
+        return conta.account.account_number === payload.conta
+          && conta.account.bank_number === payload.agencia
+      })
+
+      if (!conta) {
+        console.error('Conta não encontrada')
+      } else if (conta.account.balance < payload.valor) {
+        console.error('Saldo insuficiente')
       } else {
-        context.commit('descontarSaldo', payload)
+        context.commit('descontarSaldo', {
+          id: conta.id,
+          valor: payload.valor
+        })
         context.commit('registrarTransacao', {
           tipo: 'Saque',
           cor: 'error',
-          valor: payload
+          valor: payload.valor,
+          id: conta.id
         })
       }
     },
     incrementarSaldo (context, payload) {
-      if (payload <= 0) {
+      if (payload.valor <= 0) {
         console.error('Valor negativo')
+        return
+      }
+
+      const conta = context.state.contas.find(conta => {
+        return conta.account.account_number === payload.conta
+          && conta.account.bank_number === payload.agencia
+      })
+
+      if (!conta) {
+        console.error('Conta não encontrada')
       } else {
-        context.commit('incrementarSaldo', payload)
+        context.commit('incrementarSaldo', {
+          id: conta.id,
+          valor: payload.valor
+        })
         context.commit('registrarTransacao', {
           tipo: 'Depósito',
           cor: 'success',
-          valor: payload
+          id: conta.id,
+          valor: payload.valor
         })
       }
     },
