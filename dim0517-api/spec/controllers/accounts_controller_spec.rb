@@ -80,6 +80,42 @@ RSpec.describe AccountsController, type: :controller do
     end
   end
 
+  describe 'GET #bonus_balance' do
+    subject { get :bonus_balance, params: { id: account.id } }
+
+    context 'when the account exists' do
+      it 'returns OK status' do
+        subject
+
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'returns a json body with a message' do
+        subject
+
+        expect(response.body).to include(
+          "Saldo bônus total: R$:#{account.bonus_balance}".to_json
+        )
+      end
+    end
+
+    context 'when the account doesn\'t exists' do
+      subject { get :balance, params: { id: 9999 } }
+
+      it 'returns NOT_FOUND status' do
+        subject
+
+        expect(response).to have_http_status(:not_found)
+      end
+
+      it 'returns a json body with a message' do
+        subject
+
+        expect(response.body).to include('A conta não existe')
+      end
+    end
+  end
+
   describe 'POST deposit' do
     subject do
       post :deposit, params: {

@@ -12,6 +12,10 @@
 
 Retorna o saldo de uma conta, onde `:id` é o indicador da conta.
 
+- GET `/accounts/:id/bonus_balance`
+
+Retorna o saldo bônus de uma conta, onde `:id` é o indicador da conta.
+
 - POST `/accounts/:id/deposit`
 
 Deposita um valor em R$ na conta, onde o `:id` é o indicador da conta.
@@ -21,7 +25,7 @@ Deposita um valor em R$ na conta, onde o `:id` é o indicador da conta.
 }
 ```
 
-- POST `/account/:id/withdraw`
+- POST `/accounts/:id/withdraw`
 
 Retira um valor em R$ na conta, onde o `:id` é o indicador da conta.
 ```
@@ -30,7 +34,7 @@ Retira um valor em R$ na conta, onde o `:id` é o indicador da conta.
 }
 ```
 
-- POST `/account/:id/transfer`
+- POST `/accounts/:id/transfer`
 
 Retira um valor em R$ de uma conta à outra, onde o `:id` é o indicador da conta de onde sairá a transferência.
 ```

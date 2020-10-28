@@ -17,6 +17,14 @@ class AccountsController < ApplicationController
     render json: { message: 'A conta não existe' }, status: :not_found
   end
 
+  def bonus_balance
+    @account = Account.find(params[:id])
+
+    render json: { message: "Saldo bônus total: R$:#{@account.bonus_balance}"}, status: :ok
+  rescue ActiveRecord::RecordNotFound
+    render json: { message: 'A conta não existe' }, status: :not_found
+  end
+
   def deposit
     @account = Account.find(params[:id])
 
