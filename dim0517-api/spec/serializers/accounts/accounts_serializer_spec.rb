@@ -21,6 +21,7 @@ describe Accounts::AccountsSerializer do
                 account_number: first_account.account_number,
                 bank_number: first_account.bank_number,
                 balance: first_account.balance,
+                bonus_balance: first_account.bonus_balance,
                 user_id: first_account.user.id
               }
             },
@@ -34,6 +35,7 @@ describe Accounts::AccountsSerializer do
                 account_number: second_account.account_number,
                 bank_number: second_account.bank_number,
                 balance: second_account.balance,
+                bonus_balance: second_account.bonus_balance,
                 user_id: second_account.user.id
               }
             }

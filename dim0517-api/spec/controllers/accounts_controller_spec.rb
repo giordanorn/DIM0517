@@ -32,6 +32,7 @@ RSpec.describe AccountsController, type: :controller do
                     account_number: account.account_number,
                     bank_number: account.bank_number,
                     balance: account.balance,
+                    bonus_balance: account.bonus_balance,
                     user_id: account.user.id
                   }
                 }
@@ -143,6 +144,14 @@ RSpec.describe AccountsController, type: :controller do
         subject
 
         expect(account.reload.balance).to eq(old_balance + 400)
+      end
+
+      it 'changes the account bonus_balance' do
+        old_balance = account.bonus_balance
+
+        subject
+
+        expect(account.reload.bonus_balance).to eq(old_balance + 4)
       end
 
       context 'when the value is invalid' do

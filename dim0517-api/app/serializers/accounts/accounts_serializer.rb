@@ -17,6 +17,7 @@ module Accounts
                   account_number: account.account_number,
                   bank_number: account.bank_number,
                   balance: account.balance,
+                  bonus_balance: account.bonus_balance,
                   user_id: user_id
                 }
               }
