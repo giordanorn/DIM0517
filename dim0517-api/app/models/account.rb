@@ -1,7 +1,7 @@
 class Account < ApplicationRecord
   validates :account_number, presence: true
   validates :bank_number, presence: true
-  validates_numericality_of :balance
+  validates_numericality_of :balance, :bonus_balance
 
   belongs_to :user
 
@@ -22,6 +22,11 @@ class Account < ApplicationRecord
 
   def withdraw_balance(value)
     self.balance -= value
+    save!
+  end
+
+  def add_bonus(value)
+    self.bonus_balance += value
     save!
   end
 end
