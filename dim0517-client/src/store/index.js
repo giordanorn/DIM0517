@@ -139,7 +139,7 @@ export default new Vuex.Store({
           console.log(res)
           context.commit('realizarDeposito', { valor })
           context.commit('registrarTransacao', {
-            tipo: 'Depósito',
+            tipo: 'Crédito',
             cor: 'success',
             id,
             valor
