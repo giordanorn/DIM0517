@@ -53,13 +53,13 @@
               v-btn(color="primary" text @click="validarSaque")
                 | Confirmar
     v-btn(height="80px" @click="dialogDepositar = !dialogDepositar").success
-      | Depósito
+      | Crédito
       v-dialog(v-model="dialogDepositar" width="300")
         v-card
           v-container
             v-form(ref="formDeposito" v-on:submit.prevent="validarDeposito")
               v-card-title
-                | Depósito
+                | Crédito
               v-text-field(
                 :rules="[rules.isNumeroPositivo]"
                 v-model="valorDepositar"
