@@ -1,0 +1,15 @@
+default: &default
+  adapter: postgresql
+  encoding: unicode
+  host: dim0517-api.rails.postgres.db
+  username: postgres
+  password:
+  pool: 5
+
+development:
+  <<: *default
+  database: dim0517-api_development
+
+test:
+  <<: *default
+  database: dim0517-api_test
